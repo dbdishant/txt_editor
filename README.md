@@ -4,8 +4,9 @@ strive
 strive is a small text editor in less than 1K lines of code (counted with cloc).
 
 Usage: 
-gcc -o strive strive.c
-./strive `<filename>`
+
+    gcc -o strive strive.c
+    ./strive `<filename>`
 
 Keys:
 
