@@ -1,37 +1,3 @@
-/* strive -- A very simple editor in less than 1-strive lines of code (as counted
- *         by "cloc"). Does not depend on libcurses, directly emits VT100
- *         escapes on the terminal.
- *
- * -----------------------------------------------------------------------
- *
- * Copyright (C) 2016 Salvatore Sanfilippo <antirez at gmail dot com>
- *
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are
- * met:
- *
- *  *  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *
- *  *  Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 #define strive_VERSION "0.0.1"
 
 #ifdef __linux__
@@ -54,6 +20,10 @@
 #include <fcntl.h>
 #include <signal.h>
 #include "key_actions.h"
+#include <signal.h>
+#include <stdlib.h>
+
+
 
 /* Syntax highlight types */
 #define HL_NORMAL 0
@@ -175,6 +145,32 @@ struct editorSyntax HLDB[] = {
 
 static struct termios orig_termios; /* In order to restore at exit.*/
 
+// Function to clear the terminal screen
+void clearTerminal() {
+    write(STDOUT_FILENO, "\x1b[H\x1b[J", 6);  // Clears the screen
+}
+
+// Signal handler for Ctrl + C (SIGINT)
+void handle_sigint(int sig) {
+    (void)sig;  // suppress unused variable warning
+    editorSetStatusMessage("Exiting...");
+    // Clear terminal before exiting
+    clearTerminal();
+
+    exit(0);  // Exit the editor gracefully
+}
+
+/* Signal handler for Ctrl + Q (SIGQUIT) */
+void handle_sigquit(int sig) {
+    (void)sig;  // suppress unused variable warning
+    editorSetStatusMessage("Exiting...");
+
+    // Clear terminal before exiting
+    clearTerminal();
+
+    exit(0);  // Exit the editor gracefully
+}
+
 void disableRawMode(int fd) {
     /* Don't even check the return value as it's too late. */
     if (E.rawmode) {
@@ -270,6 +266,14 @@ int editorReadKey(int fd) {
             }
             break;
         default:
+            // Handling Ctrl+C (SIGINT) and Ctrl+Q (SIGQUIT)
+            if (c == CTRL_C) {
+                handle_sigint(SIGINT);
+                return CTRL_C;
+            } else if (c == CTRL_Q) {
+                handle_sigquit(SIGQUIT);
+                return CTRL_Q;
+            }
             return c;
         }
     }
@@ -773,26 +777,32 @@ int editorOpen(char *filename) {
 
     E.dirty = 0;
     free(E.filename);
-    size_t fnlen = strlen(filename)+1;
+    size_t fnlen = strlen(filename) + 1;
     E.filename = malloc(fnlen);
-    memcpy(E.filename,filename,fnlen);
+    memcpy(E.filename, filename, fnlen);
 
-    fp = fopen(filename,"r");
+    fp = fopen(filename, "r");  // Try opening file for reading
     if (!fp) {
-        if (errno != ENOENT) {
+        if (errno == ENOENT) {  // If the file doesn't exist
+            fp = fopen(filename, "w");  // Create it in write mode
+            if (!fp) {
+                perror("Opening file for creation");
+                return 1;
+            }
+        } else {
             perror("Opening file");
-            exit(1);
+            return 1;
         }
-        return 1;
     }
 
+    // Continue reading lines if file exists or is newly created
     char *line = NULL;
     size_t linecap = 0;
     ssize_t linelen;
-    while((linelen = getline(&line,&linecap,fp)) != -1) {
-        if (linelen && (line[linelen-1] == '\n' || line[linelen-1] == '\r'))
+    while ((linelen = getline(&line, &linecap, fp)) != -1) {
+        if (linelen && (line[linelen - 1] == '\n' || line[linelen - 1] == '\r'))
             line[--linelen] = '\0';
-        editorInsertRow(E.numrows,line,linelen);
+        editorInsertRow(E.numrows, line, linelen);
     }
     free(line);
     fclose(fp);
@@ -1172,6 +1182,7 @@ void editorProcessKeypress(int fd) {
     case CTRL_C:        /* Ctrl-c */
         /* We ignore ctrl-c, it can't be so simple to lose the changes
          * to the edited file. */
+        exit(0);  // Exit the editor immediately
         break;
     case CTRL_Q:        /* Ctrl-q */
         /* Quit if the file was already saved. */
@@ -1282,6 +1293,9 @@ void initEditor(void) {
 
     // Set up a signal handler to handle terminal window resize events (SIGWINCH)
     signal(SIGWINCH, handleSigWinCh);
+
+    // Setup signal handling for Ctrl+C
+    signal(SIGINT, handle_sigint);
 }
 
 
