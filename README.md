@@ -18,3 +18,4 @@ strive does not depend on any library (not even curses). It uses fairly standard
 VT100 (and similar terminals) escape sequences. 
 
 strive is normal file editor.
+dishant beta.
