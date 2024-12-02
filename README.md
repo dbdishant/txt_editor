@@ -19,3 +19,4 @@ VT100 (and similar terminals) escape sequences.
 
 strive is normal file editor.
 dishant beta.
+Hi here.
