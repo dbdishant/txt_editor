@@ -1,6 +1,7 @@
 #ifndef KEY_ACTIONS_H
 #define KEY_ACTIONS_H
 
+
 enum KEY_ACTION {
     KEY_NULL = 0,       /* NULL */
     CTRL_C = 3,         /* Ctrl-c */
@@ -28,4 +29,12 @@ enum KEY_ACTION {
     PAGE_DOWN
 };
 
+extern struct editorConfig E;
+
+void editorSaveAs(void);
+void editorRefreshScreen(void);
+int editorReadKey(int fd);
+
 #endif /* KEY_ACTIONS_H */
+
+

@@ -22,6 +22,7 @@
 #include "key_actions.h"
 #include <signal.h>
 #include <stdlib.h>
+#include "key_actions.h"
 
 
 
@@ -38,6 +39,8 @@
 
 #define HL_HIGHLIGHT_STRINGS (1<<0)
 #define HL_HIGHLIGHT_NUMBERS (1<<1)
+
+struct editorConfig E;
 
 struct editorSyntax {
     char **filematch;
@@ -80,7 +83,7 @@ struct editorConfig {
     struct editorSyntax *syntax;    /* Current syntax highlight, or NULL. */
 };
 
-static struct editorConfig E;
+// static struct editorConfig E;
 
 void editorSetStatusMessage(const char *fmt, ...);
 
@@ -1230,6 +1233,9 @@ void editorProcessKeypress(int fd) {
         break;
     case ESC:
         /* Nothing to do for ESC in this mode. */
+        break;
+    case CTRL_U:  /* Ctrl-u */
+        editorSaveAs();
         break;
     default:
         editorInsertChar(c);
