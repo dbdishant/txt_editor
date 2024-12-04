@@ -1237,6 +1237,9 @@ void editorProcessKeypress(int fd) {
     case CTRL_U:  /* Ctrl-u */
         editorSaveAs();
         break;
+    case CTRL_R:  /*find and replace*/
+        editorReplace(fd);
+        break;
     default:
         editorInsertChar(c);
         break;
@@ -1316,7 +1319,7 @@ int main(int argc, char **argv) {
     editorOpen(argv[1]);
     enableRawMode(STDIN_FILENO);
     editorSetStatusMessage(
-        "HELP: Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find");
+        "HELP: Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find | Ctrl-U = Save as | Ctrl-R = Replace");
     while(1) {
         editorRefreshScreen();
         editorProcessKeypress(STDIN_FILENO);

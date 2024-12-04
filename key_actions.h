@@ -16,6 +16,7 @@ enum KEY_ACTION {
     CTRL_U = 21,        /* Ctrl-u */
     ESC = 27,           /* Escape */
     BACKSPACE = 127,    /* Backspace */
+    CTRL_R = 18,         /* Find and Replace*/
     /* The following are just soft codes, not really reported by the
      * terminal directly. */
     ARROW_LEFT = 1000,
@@ -34,6 +35,7 @@ extern struct editorConfig E;
 void editorSaveAs(void);
 void editorRefreshScreen(void);
 int editorReadKey(int fd);
+void editorReplace(int fd); /* find_and_replace*/
 
 #endif /* KEY_ACTIONS_H */
 
