@@ -17,6 +17,8 @@ enum KEY_ACTION {
     ESC = 27,           /* Escape */
     BACKSPACE = 127,    /* Backspace */
     CTRL_R = 18,         /* Find and Replace*/
+    CTRL_W = 23,        /* count Words*/
+    CTRL_X = 24,       /* count characters*/
     /* The following are just soft codes, not really reported by the
      * terminal directly. */
     ARROW_LEFT = 1000,
@@ -36,6 +38,8 @@ void editorSaveAs(void);
 void editorRefreshScreen(void);
 int editorReadKey(int fd);
 void editorReplace(int fd); /* find_and_replace*/
+void countWordsAndCharacters(); /* count words*/
+void displayWordAndCharacterCount(); /* dispaly words*/
 
 #endif /* KEY_ACTIONS_H */
 

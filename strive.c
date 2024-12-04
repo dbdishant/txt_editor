@@ -1240,6 +1240,20 @@ void editorProcessKeypress(int fd) {
     case CTRL_R:  /*find and replace*/
         editorReplace(fd);
         break;
+    case CTRL_W: /* Word Count*/
+        {
+            int word_count = 0, char_count = 0;
+            countWordsAndCharacters(&word_count, &char_count);
+            editorSetStatusMessage("Word Count: %d", word_count);
+        }
+        break;
+    case CTRL_X: /*charcter Count*/
+        {
+            int word_count = 0 , char_count = 0;
+            countWordsAndCharacters(&word_count, &char_count);
+            editorSetStatusMessage("Charcter count: %d", char_count);
+        }
+        break;
     default:
         editorInsertChar(c);
         break;
@@ -1319,7 +1333,7 @@ int main(int argc, char **argv) {
     editorOpen(argv[1]);
     enableRawMode(STDIN_FILENO);
     editorSetStatusMessage(
-        "HELP: Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find | Ctrl-U = Save as | Ctrl-R = Replace");
+        "HELP: Ctrl-S  | Ctrl-Q  | Ctrl-F  | Ctrl-U | Ctrl-R  | Ctrl-W  | Ctrl-X");
     while(1) {
         editorRefreshScreen();
         editorProcessKeypress(STDIN_FILENO);
