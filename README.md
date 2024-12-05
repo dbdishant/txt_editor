@@ -1,25 +1,25 @@
-**PROJECT 3**
+# PROJECT 3
 Text Editor: Strive
 ----
 
-**Contributors**
+### Contributors
 1. Dishant Bhatnagar - B01031585
 2. Rahul Rana - B01038965
 3. Sagar Sidhwa - B01035191
 4. Saloni Wandile - B01037294
+---
 
-**Description**
+### Description
 This is a lightweight, terminal-based text editor designed to provide essential editing functionalities in a compact and efficient manner. Strive is a small text editor in less than 1K lines of code (counted with cloc).
 ---
 
-**Usage** 
-**`Command-Line Arguments`**
-    make clean
-    make
-    ./strive `<filename>`
+### Usage :
+    $ make clean
+    $ make
+    $ ./strive `<filename>`
 ---
 
-**Keys**:
+### Keys:
 
             Ctrl+S:          Save file
 
@@ -43,7 +43,7 @@ This is a lightweight, terminal-based text editor designed to provide essential 
 ---
 
 
-**`Features`**
+### Features
 
 1. File Operations
 
