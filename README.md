@@ -3,9 +3,9 @@ Text Editor: Strive
 ----
 
 **Contributors**
-1. Dishant Bhatnagar
-2. Rahul Rana
-3. Sagar Sidhwa
+1. Dishant Bhatnagar - B01031585
+2. Rahul Rana - B01038965
+3. Sagar Sidhwa - B01035191
 4. Saloni Wandile - B01037294
 
 **Description**
