@@ -22,7 +22,6 @@
 #include "key_actions.h"
 #include <signal.h>
 #include <stdlib.h>
-#include "key_actions.h"
 
 
 
